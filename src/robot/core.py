@@ -37,7 +37,7 @@ class Robot:
             left = self.left_Tsensor.pressed()
             right = self.right_Tsensor.pressed()
 
-            if left==0 and right==0:
+            if left==0 and right==0: 
                 self.drivebase.drive(100,0)
 
             elif left==1 and right==0:
@@ -54,26 +54,72 @@ class Robot:
                 break
         wait(500) 
 
+    def Infrared_scan (self):
+        """self.ev3.screen.draw_circle(87, 123, 4, True, Color.GREEN) 
+        self.lever_motor.run_target(105, 90, wait=True)
+        self.lever_motor.reset_angle(0)"""
 
-    def ir_mapping(self):
-        self.lever_motor.run_angle(80, 90)
-        self.lever_motor.reset_angle(0)
+        while True:
+            wait(3000)
+            self.ev3.screen.clear()
+            self.lever_motor.reset_angle(0)
+            self.ev3.screen.draw_circle(87, 123, 4, True, Color.GREEN)
+            while True:
+                self.lever_motor.run_angle(100, -5)
+                theta = self.lever_motor.angle()
+                r = self.Infrared_S.distance() * 0.8#ajuste 
 
-        for i in range(90):
+                x2 = 87 + r*math.cos(math.radians(theta)) #se suma x1
+                y2 = 123 +  r*math.sin(math.radians(theta)) #se suma y1
+                
+                self.ev3.screen.draw_line(87, 123, x2, y2, width=1, color=Color.BLACK)
+                self.ev3.screen.draw_circle(x2, y2, 4, True, color=Color.RED)
+                #print("theta:", theta, "x2:", x2, "y2:", y2)
 
-            self.ev3.screen.draw_circle(87, 123, 4, True, Color.GREEN)    
+                if theta <= -180:
+                    break
+                wait(50)
 
-            lever_angle = self.lever_motor.angle()
-            if lever_angle <= -170:
+            wait(3000)
+            self.ev3.screen.clear()
+            self.lever_motor.reset_angle(0)
+            self.ev3.screen.draw_circle(87, 123, 4, True, Color.GREEN)
+            while True:
+                self.lever_motor.run_angle(100, 5)
+                theta = self.lever_motor.angle()
+                r = self.Infrared_S.distance() * 0.8
+
+                x2 = 87 - r*math.cos(math.radians(theta)) 
+                y2 = 123 - r*math.sin(math.radians(theta)) 
+                
+                self.ev3.screen.draw_line(87, 123, x2, y2, width=1, color=Color.BLACK)
+                self.ev3.screen.draw_circle(x2, y2, 4, True, color=Color.RED)
+
+                if theta >= 180:
+                    break
+                wait(50)
+
+           
+        
+
+
+    def Infrared_R_m (self):
+        self.ev3.screen.draw_circle(87, 123, 4, True, Color.GREEN) 
+
+        while True:
+            self.lever_motor.run_angle(100, 5)
+            theta = self.lever_motor.angle()
+            r = self.Infrared_S.distance() * 0.8#ajuste 
+
+            x2 = 87 - r*math.cos(math.radians(theta)) 
+            y2 = 123 - r*math.sin(math.radians(theta)) 
+            
+            self.ev3.screen.draw_line(87, 123, x2, y2, width=1, color=Color.BLACK)
+            self.ev3.screen.draw_circle(x2, y2, 4, True, color=Color.RED)
+
+            if theta >= 180:
                 break
-                                
-            self.lever_motor.run_angle(80, -5, wait=True)
-
-            print("i =", i)
-            print("motor angle =", self.lever_motor.angle())
-            print("-------------------------------------------------")
-            wait(1000)
-
+            wait(50)
 
     def mapping(self):
         x1 = 10
