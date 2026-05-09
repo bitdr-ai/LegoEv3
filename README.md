@@ -1,79 +1,78 @@
-# LEGO EV3 Project
-Version: v1.3
+# LegoEv3 — Autonomous Navigation Robot
 
-Robotics project developed for LEGO EV3 using Python with Pybricks on ev3dev OS.
-This project evolves from basic motion control to environment perception and mapping using onboard sensors and motor-based scanning.
+A Python-based autonomous robot built on the LEGO Mindstorms EV3 platform. The robot uses touch sensors for collision detection and an infrared sensor mounted on a rotating lever motor to perform LIDAR-inspired environment scanning, displaying a real-time contour map on the EV3 screen.
 
+---
 
 ## Hardware
-- LEGO EV3 Brick  
-- Two drive motors (Ports A and D)  
-- Medium motor for sensor rotation (Port B)  
-- Touch sensors (Ports S1 and S4)  
-- Infrared sensor (Port S3)  
-- Wheel diameter: 55.5 mm  
-- Axle track: 106 mm  
 
-## Software
-- ev3dev OS
-- Pybricks MicroPython
-- Python 3
+| Component | Port | Role |
+|---|---|---|
+| Left Drive Motor | A | Locomotion |
+| Right Drive Motor | D | Locomotion |
+| Lever Motor | B | Rotates the infrared sensor ±180° |
+| Left Touch Sensor | S1 | Detects left-side collisions |
+| Right Touch Sensor | S4 | Detects right-side collisions |
+| Infrared Sensor | S3 | Measures distance for environment scanning |
 
-## System Overview
+**Robot configuration:**
+- Wheel diameter: 55.5 mm
+- Axle track: 106 mm
+- The infrared sensor is mounted on the lever motor, positioned above the EV3 screen, and sweeps ±180° like a LIDAR unit.
 
-The robot is built on a differential-drive model and integrates multiple sensing and mapping strategies:
+---
 
-- Reactive navigation using touch sensors  
-- Distance estimation using infrared sensing  
-- Angular scanning via a rotating sensor platform  
-- Basic 2D mapping using odometry and collision detection  
+## Project Structure
+
+```
+LegoEv3/
+├── src/
+│   ├── robot/
+│   │   ├── __init__.py
+│   │   └── core.py       # All robot logic and classes
+│   └── main.py           # Entry point — instantiates Robot and calls methods
+└── README.md
+```
 
 ---
 
 ## Features
 
-### Motion & Navigation
-- Forward motion using `DriveBase`
-- Differential turning
-- Collision detection and avoidance
-- Reactive behavior based on touch input
+### Collision Detection — `drive_until_collision()`
+The robot drives forward and reacts to touch sensor input in real time:
+- **No contact** → drives straight
+- **Left sensor only** → turns right
+- **Right sensor only** → turns left
+- **Both sensors** → stops, backs up, and exits
 
-### Infrared Polar Mapping
-- Rotating sensor using a dedicated motor
-- Angular sweep with real motor angle feedback
-- Conversion from polar to Cartesian coordinates:
-  - distance + angle → (x, y)
-- Real-time visualization on EV3 display (radar-like)
+### LIDAR-Inspired Scanning — `Infrared_scan()`
+The lever motor sweeps the infrared sensor from 0° to -180°, then from 0° to +180°, continuously. For each angle:
+- The sensor reads distance `r`
+- Polar coordinates `(r, θ)` are converted to screen coordinates `(x, y)`
+- A line is drawn from the robot's position to the detected point
+- A red dot marks the surface of detected objects
+- A green dot marks the robot's position at the center
 
-### Grid / Path Mapping (Experimental)
-- Movement until collision
-- Distance tracking using wheel odometry
-- Step-by-step path reconstruction
-- Line-based map drawing on screen
+This produces a real-time contour map of the surrounding environment on the EV3's 178×128 px screen.
 
----
-
-## Current Limitations
-- Infrared sensor noise and low precision  
-- No filtering of distance measurements  
-- Mapping is local (no persistent storage)  
-- No global coordinate system alignment  
+### Startup Gate — `pause_until_Ts_pressed()`
+The robot waits for either touch sensor to be pressed before starting any routine, with a 2-second delay to allow the operator to step back.
 
 ---
 
-## Current Focus
-- Improving infrared-based mapping accuracy  
-- Stabilizing angular scanning  
-- Refining coordinate calculations  
-- Reducing measurement noise  
+## Dependencies
 
----
+- [Pybricks](https://pybricks.com/) — EV3 MicroPython firmware
+- Python `math` module (included in Pybricks)
 
-## Future Work
-- Point cloud generation  
-- Persistent environment mapping  
-- Sensor fusion (IR + odometry)  
-- Autonomous navigation  
-- Path planning algorithms  
+> This project runs on **Pybricks MicroPython**, not standard CPython. 
 
----
+
+
+ 
+
+
+
+
+
+
