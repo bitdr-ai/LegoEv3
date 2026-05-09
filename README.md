@@ -1,4 +1,4 @@
-# LegoEv3 — Autonomous Navigation Robot
+# LegoEv3 — *Autonomous Navigation Robot
 
 A Python-based autonomous robot built on the LEGO Mindstorms EV3 platform. The robot uses touch sensors for collision detection and an infrared sensor mounted on a rotating lever motor to perform LIDAR-inspired environment scanning, displaying a real-time contour map on the EV3 screen.
 
